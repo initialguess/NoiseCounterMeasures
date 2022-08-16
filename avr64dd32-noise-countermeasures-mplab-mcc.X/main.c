@@ -37,6 +37,7 @@
 #define TOP_VALUE 0xFFFF
 #define DATA_STREAMER_START_BYTE 0x5F //trivial Data Streamer Protocol start of frame token
 #define DATA_STREAMER_END_BYTE 0xA0 
+#define PRESCALAR 0x01
 #define ADC_CHANNEL 19 /*   read ADC CHANNEL 19   : pin PF3   */
 //ADC_SAMPNUM_t numSamples = ADC_SAMPNUM_NONE_gc;
 ADC_SAMPNUM_t numSamples = ADC_SAMPNUM_ACC32_gc;
@@ -101,8 +102,9 @@ void Variable_Stream()
 	USART0_Send(DATA_STREAMER_START_BYTE);    /* Data Streamer protocol START */
     USART0_Send(adc_lsb);                     /* ADC sample LSB */
     USART0_Send(adc_msb);                     /* ADC sample MSB */
-    USART0_Send(numSamples);
-    USART0_Send(0x01);                        /* Prescalar    */
+    USART0_Send(numSamples);  /* Number of Samples Accumulated */  
+    //USART0_Send(sampDelay);                   /* Sample Delay */
+    USART0_Send(PRESCALAR);                   /* Prescalar    */
     USART0_Send(DATA_STREAMER_END_BYTE);      /* Data Streamer protocol END */
 }
 /*
