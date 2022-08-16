@@ -39,7 +39,8 @@
 #define DATA_STREAMER_END_BYTE 0xA0 
 #define ADC_CHANNEL 19 /*   read ADC CHANNEL 19   : pin PF3   */
 //ADC_SAMPNUM_t numSamples = ADC_SAMPNUM_NONE_gc;
-ADC_SAMPNUM_t numSamples = ADC_SAMPNUM_ACC64_gc;
+ADC_SAMPNUM_t numSamples = ADC_SAMPNUM_ACC32_gc;
+//ADC_SAMPNUM_t numSamples = ADC_SAMPNUM_ACC64_gc;
 //ADC_SAMPNUM_t numSamples = ADC_SAMPNUM_ACC128_gc;
 
 ADC_SAMPDLY_t sampDelay = ADC_SAMPDLY_DLY0_gc;
@@ -100,6 +101,7 @@ void Variable_Stream()
 	USART0_Send(DATA_STREAMER_START_BYTE);    /* Data Streamer protocol START */
     USART0_Send(adc_lsb);                     /* ADC sample LSB */
     USART0_Send(adc_msb);                     /* ADC sample MSB */
+    USART0_Send(numSamples);
     USART0_Send(0x01);                        /* Prescalar    */
     USART0_Send(DATA_STREAMER_END_BYTE);      /* Data Streamer protocol END */
 }
@@ -130,7 +132,7 @@ int main(void)
 void USART0_Send(uint8_t byte) {
     USART0_Write(byte);
     
-    while(!USART0_IsTxDone()) {;}
+    while(!USART0_IsTxReady()) {;}
     
     USART0.STATUS |= USART_TXCIF_bm;
 }
@@ -141,7 +143,7 @@ void SW0_callback() {
         ADC0_StopConversion();
         LED0_SetHigh();
                
-        //Increment the Samples Accumulated 2, 4, 8, 16, 32, 64, 128
+        //Increment the Samples Accumulated 0, 2, 4, 8, 16, 32, 64, 128
         numSamples++;
         
         if(numSamples == 8) {
